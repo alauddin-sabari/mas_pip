@@ -3,7 +3,7 @@ import os
 import json
 import numpy as np
 
-# from nltk.stem.snowball import SnowballStemmer
+from nltk.stem.snowball import SnowballStemmer
 import snowballstemmer
 # import requests
 
@@ -207,22 +207,22 @@ The 'about' property should refer to 1-2 entities/topics at most, and these enti
 def word_frequency(df, text_input, texts):
 
 
-        # stemmer = SnowballStemmer(language='english')
-        stemmer = snowballstemmer.stemmer('english')
+        stemmer = SnowballStemmer(language='english')
+        #stemmer = snowballstemmer.stemmer('english')
         if len(texts) >0 :
             text_input = texts
         tokens = text_input.split()
         stem_words = []
         for token in tokens:
-            # stem_words.append(stemmer.stem(token))
-            stem_words.append(stemmer.stemWords(token))
+            stem_words.append(stemmer.stem(token))
+            #stem_words.append(stemmer.stemWords(token))
            
         word_count = []
         txt = text_input.lower()
         for word in list(df['name']):
             word = word.lower()
-            # stem_word = stemmer.stem(word)
-            stem_word = stemmer.stemWords(word)
+            stem_word = stemmer.stem(word)
+            #stem_word = stemmer.stemWords(word)
             count = txt.count(word)
             if count == 0 :
                 
