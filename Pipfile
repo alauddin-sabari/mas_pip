@@ -1,0 +1,29 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+spacy = "*"
+pandas = "*"
+matplotlib = "*"
+validators = "*"
+textrazor = "*"
+requests = "*"
+beautifulsoup4 = "*"
+lxml = "*"
+simplejson = "*"
+extruct = "*"
+wikipedia-api = "*"
+spacy-streamlit = "*"
+streamlit-aggrid = "*"
+unidecode = "*"
+google-cloud-language = "*"
+streamlit = "*"
+streamlit-lottie = "*"
+snowballstemmer = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
