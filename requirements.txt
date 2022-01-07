@@ -19,4 +19,4 @@ Wikipedia_API==0.5.4
 analyzer == 0.1.1
 google-cloud == 0.34.0
 utils == 1.0.1
-nltk = 3.6.7
+nltk == 3.6.7
