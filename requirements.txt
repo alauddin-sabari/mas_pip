@@ -17,5 +17,5 @@ validators==0.18.2
 w3lib==1.22.0
 Wikipedia_API==0.5.4
 utils <=1.0.1
-analyzer <= analyzer
+analyzer <= 0.1.1
 google.cloud <= 0.34.0
