@@ -23,6 +23,7 @@ import utils
 
 author_textrazor_token = os.getenv("TEXTRAZOR_TOKEN")
 author_google_key = os.getenv("GOOGLE_KEY")
+print(author_google_key)
 
 st.set_page_config(
     page_title="The Entities Swissknife",
