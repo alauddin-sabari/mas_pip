@@ -144,6 +144,7 @@ The 'about' property should refer to 1-2 entities/topics at most, and these enti
                 google_api = json.loads(google_api.getvalue().decode("utf-8"))
         else:
             google_api = json.loads(author_google_key)
+            print(google_api)
         
 
     if input_type_selectbox == "URL":
