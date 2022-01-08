@@ -233,7 +233,7 @@ def word_frequency(df, text_input, texts):
 
             word_count.append(count)
         df = df.insert(loc=3, column='Frequency', value=np.array(word_count)) 
-        df.sort(by = ['Frequency'], inplace = True)
+        df.sort_values(by = ['Frequency'], inplace = True)
         return df
 #-------------------------------------------end----------------------------------------------
 if 'submit' in st.session_state and ("text_razor" in st.session_state and st.session_state.text_razor == True):
