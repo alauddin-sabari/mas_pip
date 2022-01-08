@@ -13,7 +13,7 @@ from nltk.stem.snowball import SnowballStemmer
 
 from io import StringIO
 
-import spacy
+#import spacy
 from spacy_streamlit import visualize_parser
 
 import pandas as pd
