@@ -3,7 +3,7 @@ import os
 import json
 import numpy as np
 
-from nltk.stem.snowball import SnowballStemmer
+
 #import snowballstemmer
 # import requests
 
@@ -208,7 +208,7 @@ The 'about' property should refer to 1-2 entities/topics at most, and these enti
 #---------------------------------------------Frequency Counter------------------
 def word_frequency(df, text_input, texts):
 
-
+        from nltk.stem.snowball import SnowballStemmer
         stemmer = SnowballStemmer(language='english')
         #stemmer = snowballstemmer.stemmer('english')
         if len(texts) >0 :
