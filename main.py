@@ -22,7 +22,7 @@ import streamlit as st
 import utils
 
 author_textrazor_token = os.getenv("TEXTRAZOR_TOKEN")
-author_google_key = os.getenv("GOOGLE_KEY")
+author_google_key = os.environ.get("GOOGLE_KEY")
 print(author_google_key)
 
 st.set_page_config(
