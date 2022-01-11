@@ -1,21 +1,10 @@
-from logging import log
 import os
 import json
-import numpy as np
-
-
-#import snowballstemmer
-# import requests
-
-# response = requests.get(url)
-# response.raise_for_status()  # raises exception when not a 2xx response
-
-
 from io import StringIO
 
 import spacy
 from spacy_streamlit import visualize_parser
-
+from streamlit_lottie import st_lottie
 import pandas as pd
 import streamlit as st
 
@@ -23,7 +12,6 @@ import utils
 
 author_textrazor_token = os.getenv("TEXTRAZOR_TOKEN")
 author_google_key = os.getenv("GOOGLE_KEY")
-print(author_google_key)
 
 st.set_page_config(
     page_title="The Entities Swissknife",
@@ -52,20 +40,13 @@ st.markdown(hide_st_style, unsafe_allow_html=True)
 # if "it_nlp" not in st.session_state:
 #     st.session_state.it_nlp = spacy.load("it_core_news_sm")
 
-
-# @st.cache(suppress_st_warning=True) 
-# def logo():
-# @st.cache(allow_output_mutation=True)
-# def logo():
-from streamlit_lottie import st_lottie
-x= "anim"
-if  x not in st.session_state:
+if "anim" not in st.session_state:
     with open("data.json") as f:
         st.session_state.anim = json.loads(f.read())
-
+    
     with st.sidebar:
         st_lottie(st.session_state.anim, width=280, height=230, loop=False, key="anim_makoto")
-# logo()
+
 
 st.markdown(
         "###### [![this is an image link](https://studiomakoto.it/wp-content/uploads/2021/08/header-logo.webp)](https://studiomakoto.it/?utm_source=streamlit&utm_medium=app&utm_campaign=Entities-swissknife)"
@@ -112,6 +93,7 @@ This app, devoted to ✍️[Semantic Publishing](https://en.wikipedia.org/wiki/S
 The Entities Swissknife (TES) is a 100% 🐍Python🐍 app for Semantic publishing, i.e., publishing information on the web as documents accompanied by semantic markup (using the [schema.org](https://schema.org) vocabulary in JSON-LD format). Semantic publication provides a way for machines to understand the structure and meaning of the published information, making information search and data integration more efficient.
 Semantic publishing relies on Structured Data adoption and Entity Linking (Wikification). Named entities are then injected into the JSON-LD markup to make the Content Topics explicit and 🥰Search engines friendly🥰: declare the main topic with the '[about](https://schema.org/about)' property and the secondary topics with the '[mentions](https://schema.org/mentions)' property).
 The 'about' property should refer to 1-2 entities/topics at most, and these entities should be present in your H1 title. The 'mentions' properties should be no more than 3-5 depending on the article's length; as a general rule, an entities/topics should be explicitly mentioned in your schema markup if there is at least one paragraph dedicated to them (and they are possibly present in the relative headline).
+
             
             """
         )
@@ -125,6 +107,7 @@ The 'about' property should refer to 1-2 entities/topics at most, and these enti
 -   Generate the JSON-LD markup (and inject it into your page schema) to explicit which topics your page is about to search engines. Declare your main topic with the 'about' property. Use the 'mentions' property to declare your secondary topics. This is helpful for disambiguation purposes too;
 -   Analyze short texts such as a copy for an ad or a bio/description for an About-page (i.e., the [Entity Home](https://kalicube.com/faq/brand-serps/entity-home-in-seo-explainer/)).
 -   Fine-tune the text until Google correctly recognizes the relevant entities and gives them desired salience. Use the SpaCy Part-of-Speech module to check how algorithms understand dependencies. Simplify the structure of the sentence if it is machines unfriendly.
+
            """
         )
     
@@ -144,7 +127,6 @@ The 'about' property should refer to 1-2 entities/topics at most, and these enti
                 google_api = json.loads(google_api.getvalue().decode("utf-8"))
         else:
             google_api = json.loads(author_google_key)
-            print(google_api)
         
 
     if input_type_selectbox == "URL":
@@ -170,7 +152,6 @@ The 'about' property should refer to 1-2 entities/topics at most, and these enti
     # spacy_pos = st.checkbox('Process Part-of-Speech analysis with SpaCy')
     spacy_pos = False
     scrape_all = st.checkbox("Scrape ALL the Entities descriptions from Wikipedia. This is a time-consuming task, so grab a coffee if you need all the descriptions in your CSV file. The descriptions of the Entities you select for your 'about' and 'mentions' schema properties will be scraped and present in the corresponding JSON-LD files")
-    
     if api_selectbox == "TextRazor":
         extract_categories_topics = st.checkbox('Extract Categories and Topics')
     submitted = st.form_submit_button("Submit")
@@ -183,14 +164,7 @@ The 'about' property should refer to 1-2 entities/topics at most, and these enti
             st.session_state.submit = True
             if api_selectbox == "TextRazor":
                 output, response, topics_output, categories_output = utils.get_df_text_razor(text_razor_key, text_input, extract_categories_topics, is_url, scrape_all)
-                #print('output 167 line:\n', output) #-------------------------
-                #print('response 168 line :\n',response)
                 st.session_state.text = response.cleaned_text
-                #----------------------updated--------------
-                texts = response.cleaned_text
-                #--------------------end--------------------
-                #print('response.cleaned_text\n', response.cleaned_text)
-                #-------------------------------------------------------------------
                 st.session_state.text_razor = True
                 st.session_state.df_razor = pd.DataFrame(output)
                 if topics_output:
@@ -200,61 +174,21 @@ The 'about' property should refer to 1-2 entities/topics at most, and these enti
             elif api_selectbox == "Google NLP":
                 output, response = utils.get_df_google_nlp(google_api, text_input, is_url, scrape_all)
                 st.session_state.text = text_input
-                print("184 output google api", text_input)
                 st.session_state.google_api = True
                 st.session_state.df_google = pd.DataFrame(output)
             
             st.session_state.lang = response.language
-#---------------------------------------------Frequency Counter------------------
-def word_frequency(df, text_input, texts):
 
-        from nltk.stem.snowball import SnowballStemmer
-        stemmer = SnowballStemmer(language='english')
-        #stemmer = snowballstemmer.stemmer('english')
-        if len(texts) >0 :
-            text_input = texts
-        tokens = text_input.split()
-        stem_words = []
-        for token in tokens:
-            stem_words.append(stemmer.stem(token))
-            #stem_words.append(stemmer.stemWords(token))
-           
-        word_count = []
-        txt = text_input.lower()
-        for word in list(df['name']):
-            word = word.lower()
-            stem_word = stemmer.stem(word)
-            #stem_word = stemmer.stemWords(word)
-            count = txt.count(word)
-            if count == 0 :
-                
-                count = stem_words.count(stem_word)
-                word_count.append(count)
-                continue
-           
-
-            word_count.append(count)
-        df = df.insert(loc=3, column='Frequency', value=np.array(word_count)) 
-        return df
-#-------------------------------------------end----------------------------------------------
 if 'submit' in st.session_state and ("text_razor" in st.session_state and st.session_state.text_razor == True):
     text_input, is_url = utils.write_meta(text_input, meta_tags_only, is_url)
-   # print('text_input\n', text_input)
-   # print('is_url\n', is_url)
     if 'df_razor' in st.session_state:
         df = st.session_state["df_razor"]
-
     if len(df) > 0:
         df['temp'] = df['Relevance Score'].str.strip('%').astype(float)
         df = df.sort_values('temp', ascending=False)
         del df['temp']
         selected_about_names = st.multiselect('Select About Entities:', df.name)
         selected_mention_names = st.multiselect('Select Mentions Entities:', df.name)
-        #--------------Frequency count--------------
-     
-    word_frequency(df, text_input, texts) 
-    #print(is_url)
-    #print(text_input)
     st.write('### Entities', df)
     c, t = st.columns(2)
     if 'df_razor_categories' in st.session_state and extract_categories_topics:
@@ -305,8 +239,6 @@ if 'submit' in st.session_state and ("google_api" in st.session_state and st.ses
         del df['temp']
         selected_about_names = st.multiselect('Select About Entities:', df.name)
         selected_mention_names = st.multiselect('Select Mentions Entities:', df.name)
-        #---------------------frequency counter
-    word_frequency(df, text_input, texts)
     st.write('### Entities', df)
     
     if len(df) > 0:
@@ -322,8 +254,7 @@ if 'submit' in st.session_state and ("google_api" in st.session_state and st.ses
     if spacy_pos:
         if st.session_state.lang in "eng":
             doc = st.session_state.en_nlp(st.session_state.text)
-            print('English', doc)
         elif st.session_state.lang in "ita":
             doc = st.session_state.it_nlp(st.session_state.text)
-            print('Itelian')
         visualize_parser(doc)
+       
