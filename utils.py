@@ -284,6 +284,7 @@ def get_metadata(html, url):
 
 
 def get_df_text_razor(text_razor_key, text_input, extract_categories_topics, is_url, scrape_all):
+    #x = True
     """ Get data using TextRazor API.
 
     Args:
@@ -318,7 +319,7 @@ def get_df_text_razor(text_razor_key, text_input, extract_categories_topics, is_
         not str(entity.id).isnumeric() and not is_time(entity.id):
             summary = ""
             en_link = ""
-            if scrape_all:
+            if scrape_all:# or x:
                 summary, en_link, it_link = get_summary_link(entity.id, response.language)
             if entity.dbpedia_types:
                 entity_type = entity.dbpedia_types[0]
@@ -332,6 +333,7 @@ def get_df_text_razor(text_razor_key, text_input, extract_categories_topics, is_
                 "description": summary,
                 "Wikidata Id": entity.wikidata_id,
                 "Confidence Score": entity.confidence_score,
+                #"Confidence Score":f"{(entity.confidence_score/max(entity.confidence_score))* 100:.2f}%",
                 "Relevance Score": f"{entity.relevance_score * 100:.2f}%",
                 "Wikipedia Link": entity.wikipedia_link,
                 "English Wikipedia Link": en_link,
@@ -361,8 +363,17 @@ def get_df_text_razor(text_razor_key, text_input, extract_categories_topics, is_
             )
     return output, response, topics_output, categories_output
 
+#----------------------------Convert Confidence score value into percentage----------------------
+def conf(df, col):
+    if col in df:
+        df[col] = (df[[col]].div(max(df[col]), axis=1)*100).round(2).astype(str) + '%'
+ 
+ #-------------------------------------end----------------------------------------------
+
 
 def get_df_google_nlp(key, text_input, is_url, scrape_all):
+    x = True
+   # scrape_all= True
     """ Get data using Google Natural Language API.
 
     Args:
@@ -397,7 +408,7 @@ def get_df_google_nlp(key, text_input, is_url, scrape_all):
             summary = ""
             en_link = ""
             it_link = ""
-            if scrape_all:
+            if scrape_all or x:
                 summary, en_link, it_link = get_summary_link(entity.name, response.language)
             if entity.metadata.get("mid"):
                 mid = "https://www.google.com/search?kgmid=" + entity.metadata.get("mid")
@@ -419,9 +430,9 @@ def get_df_google_nlp(key, text_input, is_url, scrape_all):
                 "English Wikipedia Link": en_link,
             }
             if not scrape_all:
-                del data["description"]
-                del data["English Wikipedia Link"]
-                del data["Italian Wikipedia Link"]
+                 del data["description"]
+            #     del data["English Wikipedia Link"]
+            #     del data["Italian Wikipedia Link"]
             output.append(data)
             known_entities.append(entity.name)
         progress_bar.progress((progress_val)/len(response.entities))

@@ -24,7 +24,7 @@ import utils
 import time
 author_textrazor_token = os.getenv("TEXTRAZOR_TOKEN")
 author_google_key = os.getenv("GOOGLE_KEY")
-# print(author_google_key)
+#print(author_google_key)
 
 st.set_page_config(
     page_title="The Entities Swissknife",
@@ -105,9 +105,9 @@ with st.form("my_form"):
     st.sidebar.info('##### Knowledge Graph Entity ID is extracted only using the Google NLP API.') 
     st.sidebar.info('##### Categories and Topics - by [IPTC Media Topics](https://iptc.org/standards/media-topics/) - are avalaible only using the TextRazor API.') 
     st.sidebar.info('')
-    loti_path = load_lottifile('lotti/seo.json')
-    with st.sidebar:
-        st_lottie(loti_path, width=280, height=130)
+    # loti_path = load_lottifile('lotti/seo.json')
+    # with st.sidebar:
+    #     st_lottie(loti_path, width=280, height=130)
    
 #st.title('Lotti')
 
@@ -164,15 +164,15 @@ The 'about' property should refer to 1-2 entities/topics at most, and these enti
                 google_api = json.loads(google_api.getvalue().decode("utf-8"))
         else:
             google_api = json.loads(author_google_key)
-            # print(google_api)
+            #print(google_api)
         
 
     if input_type_selectbox == "URL":
         text_input = st.text_input('Please enter a URL', placeholder='https://gofishdigital.com/what-is-semantic-seo/')        
-        # print('text_input 171 the first lien\n',text_input)
+        #print('text_input 171 the first lien\n',text_input)
      
         meta_tags_only = st.checkbox('Extract Entities only from meta tags (tag_title, meta_description & H1-4)')
-        # print('172 meta tag', meta_tags_only)
+        #print('172 meta tag', meta_tags_only)
         if "last_field_type" in st.session_state and st.session_state.last_field_type != input_type_selectbox:
             st.session_state.text_razor = False
             st.session_state.google_api = False
@@ -190,11 +190,11 @@ The 'about' property should refer to 1-2 entities/topics at most, and these enti
         meta_tags_only = False
         text_input = st.text_area('Please enter a text', placeholder='Posts involving Semantic SEO at Google include structured data, schema, and knowledge graphs, with SERPs that answer questions and rank entities - Bill Slawsky.')
     is_url = utils.is_url(text_input)
-    # print('is_uri from 192 line\n', is_url)
+   # print('is_uri from 192 line\n', is_url)
     # spacy_pos = st.checkbox('Process Part-of-Speech analysis with SpaCy')
     spacy_pos = False
     scrape_all = st.checkbox("Scrape ALL the Entities descriptions from Wikipedia. This is a time-consuming task, so grab a coffee if you need all the descriptions in your CSV file. The descriptions of the Entities you select for your 'about' and 'mentions' schema properties will be scraped and present in the corresponding JSON-LD files")
-    # print('Scrape all', scrape_all)
+    #rint('Scrape all', scrape_all)
     if api_selectbox == "TextRazor":
         extract_categories_topics = st.checkbox('Extract Categories and Topics')
     submitted = st.form_submit_button("Submit")
@@ -212,13 +212,13 @@ The 'about' property should refer to 1-2 entities/topics at most, and these enti
             if api_selectbox == "TextRazor":
                 output, response, topics_output, categories_output = utils.get_df_text_razor(text_razor_key, text_input, extract_categories_topics, is_url, scrape_all)
                 #print('output 167 line:\n', output) #-------------------------
-                # print('response 213 line :\n',response)
+               # print('response 213 line :\n',response)
                 st.session_state.text = response.cleaned_text
                 #response1 = [response.cleaned_text]
                 #----------------------updated--------------
                 texts = st.session_state.text
                 #--------------------end--------------------
-                # print('response.cleaned_text\n', response.cleaned_text)
+                #print('response.cleaned_text\n', response.cleaned_text)
                 #-------------------------------------------------------------------
                 st.session_state.text_razor = True
                 st.session_state.df_razor = pd.DataFrame(output)
@@ -228,12 +228,12 @@ The 'about' property should refer to 1-2 entities/topics at most, and these enti
                     st.session_state.df_razor_categories = pd.DataFrame(categories_output)
             elif api_selectbox == "Google NLP":
                 output, response = utils.get_df_google_nlp(google_api, text_input, is_url, scrape_all)
-                # print('is_url', is_url)
+                #print('is_url', is_url)
                 #response1 = list(response)
                 response1 = [response]
                 response2 = list(response1)
                 #response2 = response2[0].lower()
-                # print('type of response \n', type(response))
+                #print('type of response \n', type(response))
                 #print()
                 # st.write('response==>\n', response)
                 # st.write('response==>\n', response2)
@@ -296,6 +296,15 @@ def word_frequency(df, text_input, language_option, texts= texts):
         df = df.insert(loc=3, column='Frequency', value=np.array(word_count)) 
         return df
 #-------------------------------------------end----------------------------------------------
+# #----------------------------Convert Confidence score value into percentage----------------------
+# def conf(col):
+#     if col in df:
+#         df[col] = (df[[col]].div(max(df[col]), axis=1)*100).round(2).astype(str) + '%'
+ 
+#  #-------------------------------------end----------------------------------------------
+
+
+
 if 'submit' in st.session_state and ("text_razor" in st.session_state and st.session_state.text_razor == True):
     text_input, is_url = utils.write_meta(text_input, meta_tags_only, is_url)
    # print('text_input\n', text_input)
@@ -314,8 +323,9 @@ if 'submit' in st.session_state and ("text_razor" in st.session_state and st.ses
     word_frequency(df, text_input, language_option, texts) #-----------------------Function call for textrazor-------------
     #print(is_url)
     #print(text_input)
+    utils.conf(df, "Confidence Score")
     st.write('### Entities', df)
-    st.write('#### Entity table Dimension', df.shape)
+    #st.write('#### Entity table Dimension', df.shape)
     df1 = df.sort_values('Frequency', ascending=False)
     st.write('### Top 10 Entities', df1[['name', 'Frequency']].head(10))
     #st.write(response1)
@@ -390,17 +400,18 @@ if 'submit' in st.session_state and ("google_api" in st.session_state and st.ses
         selected_mention_names = st.multiselect('Select Mentions Entities:', df.name)
         #---------------------frequency counter
     #response1 = [response]
-   # st.write('### Entities', df)
-    if not is_url:
-        word_frequency(df, text_input, language_option, texts) 
-    # else:
-    #     word_frequency1(df,  response2)        #-----------------function call for google api
+    utils.conf(df, "Confidence Score")
     st.write('### Entities', df)
+    # if not is_url:
+    #     word_frequency(df, text_input, language_option, texts) 
+    # # else:
+    # #     word_frequency1(df,  response2)        #-----------------function call for google api
+    # st.write('### Entities', df)
     
-    st.write('#### Entity table Dimension', df.shape)
-    if not is_url:
-        df1 = df.sort_values('Frequency', ascending=False)
-        st.write('### Top 10 Entities', df1[['name', 'Frequency']].head(10))
+    # st.write('#### Entity table Dimension', df.shape)
+    # if not is_url:
+    #     df1 = df.sort_values('Frequency', ascending=False)
+    #     st.write('### Top 10 Entities', df1[['name', 'Frequency']].head(10))
     
     #response2 = list(response)
     #st.write(response1)
