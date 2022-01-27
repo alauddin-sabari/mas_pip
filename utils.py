@@ -410,6 +410,8 @@ def get_df_google_nlp(key, text_input, is_url, scrape_all):
             it_link = ""
             if scrape_all or x:
                 summary, en_link, it_link = get_summary_link(entity.name, response.language)
+                lang = response.language
+
             if entity.metadata.get("mid"):
                 mid = "https://www.google.com/search?kgmid=" + entity.metadata.get("mid")
             else:
@@ -429,10 +431,15 @@ def get_df_google_nlp(key, text_input, is_url, scrape_all):
                 "Italian Wikipedia Link": it_link,
                 "English Wikipedia Link": en_link,
             }
+            print('\nLanguage\n', response.language)
             if not scrape_all:
                  del data["description"]
             #     del data["English Wikipedia Link"]
             #     del data["Italian Wikipedia Link"]
+            if not scrape_all and lang == "it":
+                del data["English Wikipedia Link"]
+            if  lang == "en":
+                del data["Italian Wikipedia Link"]
             output.append(data)
             known_entities.append(entity.name)
         progress_bar.progress((progress_val)/len(response.entities))
